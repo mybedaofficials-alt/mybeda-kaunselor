@@ -173,52 +173,112 @@
 
 
     <!-- DASHBOARD -->
-    <div id="dashboard">
+<div id="dashboard">
 
-      <div class="welcome">
-        <h2>Dashboard</h2>
-        <div id="userName">MYBEDA Kaunselor</div>
-      </div>
+  <div class="welcome">
+    <h2>MYBEDA COUNSELLOR</h2>
+    <div id="userName">MYBEDA Counsellor</div>
+    <p>Education Counselling Management System</p>
+  </div>
 
-      <div class="stat-grid">
+  <div class="stat-grid">
 
-        <div class="stat">
-          <small>Total Pelajar</small>
-          <strong id="totalStudents">0</strong>
-        </div>
+    <div class="stat">
+      <small>Total Students</small>
+      <strong id="totalStudents">0</strong>
+      <span>All registered records</span>
+    </div>
 
-        <div class="stat">
-          <small>Lead Baru</small>
-          <strong id="newLeads">0</strong>
-        </div>
+    <div class="stat">
+      <small>New Leads</small>
+      <strong id="newLeads">0</strong>
+      <span>New prospects</span>
+    </div>
 
-        <div class="stat">
-          <small>Counselling</small>
-          <strong id="counselling">0</strong>
-        </div>
+    <div class="stat">
+      <small>Counselling</small>
+      <strong id="counselling">0</strong>
+      <span>Under counselling</span>
+    </div>
 
-        <div class="stat">
-          <small>Follow-up</small>
-          <strong id="followUp">0</strong>
-        </div>
+    <div class="stat">
+      <small>Follow-up</small>
+      <strong id="followUp">0</strong>
+      <span>Requires follow-up</span>
+    </div>
 
-        <div class="stat">
-          <small>Registered</small>
-          <strong id="registered">0</strong>
-        </div>
+    <div class="stat">
+      <small>Registered</small>
+      <strong id="registered">0</strong>
+      <span>Registered students</span>
+    </div>
 
-        <div class="stat">
-          <small>Completed</small>
-          <strong id="completed">0</strong>
-        </div>
-
-      </div>
-
-      <button class="logout" onclick="logoutUser()">LOG KELUAR</button>
-
+    <div class="stat">
+      <small>Completed</small>
+      <strong id="completed">0</strong>
+      <span>Completed cases</span>
     </div>
 
   </div>
+
+  <div class="card">
+    <h3>Recruitment Pipeline</h3>
+
+    <div class="stat-grid">
+
+      <div class="stat">
+        <small>P2</small>
+        <strong id="p2Count">0</strong>
+        <span>Application stage</span>
+      </div>
+
+      <div class="stat">
+        <small>R1</small>
+        <strong id="r1Count">0</strong>
+        <span>Recruitment stage</span>
+      </div>
+
+      <div class="stat">
+        <small>R2</small>
+        <strong id="r2Count">0</strong>
+        <span>Recruitment stage</span>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Master Control</h3>
+    <p>Manage students, counselling, follow-ups, collections, documents and staff.</p>
+
+    <div class="stat-grid">
+
+      <div class="stat">
+        <small>Collections</small>
+        <strong id="totalCollection">RM 0</strong>
+        <span>Total collection</span>
+      </div>
+
+      <div class="stat">
+        <small>Commission</small>
+        <strong id="totalCommission">RM 0</strong>
+        <span>Current commission</span>
+      </div>
+
+      <div class="stat">
+        <small>Documents</small>
+        <strong id="incompleteDocuments">0</strong>
+        <span>Incomplete submissions</span>
+      </div>
+
+    </div>
+  </div>
+
+  <button class="logout" onclick="logoutUser()">
+    Logout
+  </button>
+
+</div>
 
 
 <script>
