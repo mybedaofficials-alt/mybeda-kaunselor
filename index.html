@@ -263,7 +263,7 @@
 
     if (error) {
       message.textContent =
-        "Login gagal: " + error.message;
+        "Login gagal: " + error.message + " | " + error.name;
       return;
     }
 
