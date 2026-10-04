@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#7a0019">
+  <title>MYBEDA Kaunselor</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f5f5f5;
+      color: #222;
+    }
+
+    .container {
+      max-width: 430px;
+      margin: auto;
+      min-height: 100vh;
+      padding: 24px 20px;
+    }
+
+    .logo {
+      text-align: center;
+      margin-top: 50px;
+      margin-bottom: 35px;
+    }
+
+    .logo h1 {
+      margin: 0;
+      color: #7a0019;
+      font-size: 28px;
+    }
+
+    .logo p {
+      margin-top: 8px;
+      color: #666;
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 18px;
+      box-shadow: 0 4px 20px rgba(0,0,0,.08);
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 20px;
+      border: 0;
+      border-radius: 10px;
+      background: #7a0019;
+      color: white;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    button:active {
+      opacity: .8;
+    }
+
+    #message {
+      margin-top: 15px;
+      color: #c00;
+      text-align: center;
+    }
+
+    #dashboard {
+      display: none;
+    }
+
+    .welcome {
+      background: #7a0019;
+      color: white;
+      padding: 22px;
+      border-radius: 16px;
+      margin-bottom: 18px;
+    }
+
+    .welcome h2 {
+      margin: 0 0 5px;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .stat {
+      background: white;
+      padding: 20px;
+      border-radius: 14px;
+      box-shadow: 0 3px 12px rgba(0,0,0,.06);
+    }
+
+    .stat small {
+      color: #777;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 28px;
+      margin-top: 5px;
+    }
+
+    .logout {
+      background: #333;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <!-- LOGIN -->
+    <div id="login">
+
+      <div class="logo">
+        <h1>MYBEDA KAUNSELOR</h1>
+        <p>Sistem Pengurusan Kaunselor Pendidikan</p>
+      </div>
+
+      <div class="card">
+
+        <h2>Log Masuk</h2>
+
+        <label>Email</label>
+        <input
+          type="email"
+          id="email"
+          placeholder="Masukkan email"
+        >
+
+        <label>Kata Laluan</label>
+        <input
+          type="password"
+          id="password"
+          placeholder="Masukkan kata laluan"
+        >
+
+        <button onclick="loginUser()">LOG MASUK</button>
+
+        <div id="message"></div>
+
+      </div>
+
+    </div>
+
+
+    <!-- DASHBOARD -->
+    <div id="dashboard">
+
+      <div class="welcome">
+        <h2>Dashboard</h2>
+        <div id="userName">MYBEDA Kaunselor</div>
+      </div>
+
+      <div class="stat-grid">
+
+        <div class="stat">
+          <small>Total Pelajar</small>
+          <strong id="totalStudents">0</strong>
+        </div>
+
+        <div class="stat">
+          <small>Lead Baru</small>
+          <strong id="newLeads">0</strong>
+        </div>
+
+        <div class="stat">
+          <small>Counselling</small>
+          <strong id="counselling">0</strong>
+        </div>
+
+        <div class="stat">
+          <small>Follow-up</small>
+          <strong id="followUp">0</strong>
+        </div>
+
+        <div class="stat">
+          <small>Registered</small>
+          <strong id="registered">0</strong>
+        </div>
+
+        <div class="stat">
+          <small>Completed</small>
+          <strong id="completed">0</strong>
+        </div>
+
+      </div>
+
+      <button class="logout" onclick="logoutUser()">LOG KELUAR</button>
+
+    </div>
+
+  </div>
+
+
+<script>
+
+  const SUPABASE_URL =
+    "https://spzqbqitrvajqzcqgtv.supabase.co";
+
+  const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_Szc7ZQhb4fFwYmq95libYw_KFUMN7Ky"
+
+  const supabaseClient =
+    window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
+    );
+
+
+  async function loginUser() {
+
+    const email =
+      document.getElementById("email").value.trim();
+
+    const password =
+      document.getElementById("password").value;
+
+    const message =
+      document.getElementById("message");
+
+    message.textContent = "";
+
+    if (!email || !password) {
+      message.textContent =
+        "Sila masukkan email dan kata laluan.";
+      return;
+    }
+
+    const { data, error } =
+      await supabaseClient.auth.signInWithPassword({
+        email: email,
+        password: password
+      });
+
+    if (error) {
+      message.textContent =
+        "Login gagal: " + error.message;
+      return;
+    }
+
+    await showDashboard(data.user);
+  }
+
+
+  async function showDashboard(user) {
+
+    document.getElementById("login").style.display =
+      "none";
+
+    document.getElementById("dashboard").style.display =
+      "block";
+
+    const { data: profile } =
+      await supabaseClient
+        .from("profiles")
+        .select("full_name, role")
+        .eq("id", user.id)
+        .single();
+
+    if (profile) {
+
+      document.getElementById("userName").textContent =
+        profile.full_name + " • " +
+        profile.role.toUpperCase();
+
+    }
+
+    await loadStats();
+  }
+
+
+  async function loadStats() {
+
+    const { count: total } =
+      await supabaseClient
+        .from("students")
+        .select("*", {
+          count: "exact",
+          head: true
+        });
+
+    const { count: newLeads } =
+      await supabaseClient
+        .from("students")
+        .select("*", {
+          count: "exact",
+          head: true
+        })
+        .eq("status", "new");
+
+    const { count: counselling } =
+      await supabaseClient
+        .from("students")
+        .select("*", {
+          count: "exact",
+          head: true
+        })
+        .eq("status", "counselling");
+
+    const { count: followUp } =
+      await supabaseClient
+        .from("students")
+        .select("*", {
+          count: "exact",
+          head: true
+        })
+        .eq("status", "follow_up");
+
+    const { count: registered } =
+      await supabaseClient
+        .from("students")
+        .select("*", {
+          count: "exact",
+          head: true
+        })
+        .eq("status", "registered");
+
+    const { count: completed } =
+      await supabaseClient
+        .from("students")
+        .select("*", {
+          count: "exact",
+          head: true
+        })
+        .eq("status", "completed");
+
+
+    document.getElementById("totalStudents").textContent =
+      total || 0;
+
+    document.getElementById("newLeads").textContent =
+      newLeads || 0;
+
+    document.getElementById("counselling").textContent =
+      counselling || 0;
+
+    document.getElementById("followUp").textContent =
+      followUp || 0;
+
+    document.getElementById("registered").textContent =
+      registered || 0;
+
+    document.getElementById("completed").textContent =
+      completed || 0;
+  }
+
+
+  async function logoutUser() {
+
+    await supabaseClient.auth.signOut();
+
+    document.getElementById("dashboard").style.display =
+      "none";
+
+    document.getElementById("login").style.display =
+      "block";
+
+  }
+
+</script>
+
+</body>
+</html>
