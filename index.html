@@ -941,6 +941,40 @@ if (profile) profile.remove();
         <input id="editDistrict" type="text"
           style="width:100%;padding:12px;margin:6px 0 14px;box-sizing:border-box;">
 
+        <label style="font-weight:bold;font-size:18px;margin-top:18px;display:block;">
+  Academic / Qualification
+</label>
+
+<label>Qualification Level</label>
+<input id="editQualificationLevel" type="text"
+  placeholder="e.g. SPM / Diploma / Degree / TVET"
+  style="width:100%;padding:12px;margin:6px 0 14px;">
+
+<label>Qualification / Course</label>
+<input id="editQualification" type="text"
+  placeholder="e.g. SPM / Diploma in Business"
+  style="width:100%;padding:12px;margin:6px 0 14px;">
+
+<label>Institution</label>
+<input id="editInstitution" type="text"
+  placeholder="School / College / University"
+  style="width:100%;padding:12px;margin:6px 0 14px;">
+
+<label>Result / CGPA</label>
+<input id="editResult" type="text"
+  placeholder="e.g. 3 Credits / CGPA 3.20"
+  style="width:100%;padding:12px;margin:6px 0 14px;">
+
+<label>Academic Documents</label>
+<input id="editAcademicDocuments" type="text"
+  placeholder="e.g. SPM Certificate / Transcript"
+  style="width:100%;padding:12px;margin:6px 0 14px;">
+
+<label>Eligibility Result</label>
+<input id="editEligibilityResult" type="text"
+  placeholder="Eligible / Not Eligible / Pending"
+  readonly
+  style="width:100%;padding:12px;margin:6px 0 18px;">
         <label>Programme</label>
         <input id="editProgram" type="text"
           style="width:100%;padding:12px;margin:6px 0 14px;box-sizing:border-box;">
@@ -1034,6 +1068,38 @@ if (profile) profile.remove();
 
   document.getElementById("editDistrict").value =
     student.district || "";
+  const { data: academicRecord } = await supabaseClient
+  .from("academic_records")
+  .select("*")
+  .eq("student_id", studentId)
+  .maybeSingle();
+
+if (academicRecord) {
+  document.getElementById("editQualificationLevel").value =
+    academicRecord.qualification_level || "";
+
+  document.getElementById("editQualification").value =
+    academicRecord.qualification ||
+    academicRecord.course ||
+    "";
+
+  document.getElementById("editInstitution").value =
+    academicRecord.institution || "";
+
+  document.getElementById("editResult").value =
+    academicRecord.result ||
+    academicRecord.cgpa ||
+    "";
+
+  document.getElementById("editAcademicDocuments").value =
+    academicRecord.academic_documents ||
+    academicRecord.documents ||
+    "";
+
+  document.getElementById("editEligibilityResult").value =
+    academicRecord.eligibility_result ||
+    "Pending";
+}
 
   document.getElementById("editProgram").value =
     student.program || "";
@@ -1092,6 +1158,24 @@ if (profile) profile.remove();
     }
 
     alert("Maklumat pelajar berjaya dikemas kini.");
+    const academicLevel =
+  document.getElementById("editQualificationLevel").value.trim();
+
+if (academicLevel) {
+  const { error: academicError } = await supabaseClient
+    .from("academic_records")
+    .upsert({
+      student_id: studentId,
+      qualification_level: academicLevel
+    }, {
+      onConflict: "student_id"
+    });
+
+  if (academicError) {
+    alert("Maklumat akademik gagal disimpan: " + academicError.message);
+    return;
+  }
+}
 
     modal.remove();
 
