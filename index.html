@@ -798,8 +798,25 @@ async function openStudentProfile(studentId) {
             margin-top:12px;
           "
         >
-          Back to Students
-        </button>
+      Back to Students
+</button>
+    <button
+  onclick="editStudent('${student.id}')"
+  style="
+    width:100%;
+    padding:14px;
+    border:0;
+    border-radius:12px;
+    background:#800000;
+    color:white;
+    font-size:17px;
+    font-weight:bold;
+    margin-top:12px;
+  "
+>
+  Edit Student
+</button>
+
 
       </div>
     </div>
@@ -814,7 +831,248 @@ function closeStudents() {
     module.remove();
   }
 }
+async function editStudent(studentId) {
+  const { data: student, error } = await supabaseClient
+    .from("students")
+    .select("*")
+    .eq("id", studentId)
+    .single();
 
+  if (error) {
+    alert("Gagal buka data pelajar: " + error.message);
+    return;
+  }
+
+  const oldModal = document.getElementById("editStudentModal");
+  if (oldModal) oldModal.remove();
+
+  const modal = document.createElement("div");
+  modal.id = "editStudentModal";
+
+  modal.innerHTML = `
+    <div style="
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.65);
+      z-index:9999;
+      overflow:auto;
+      padding:20px;
+    ">
+      <div style="
+        max-width:600px;
+        margin:30px auto;
+        background:white;
+        border-radius:16px;
+        padding:20px;
+      ">
+
+        <h2 style="
+          margin-top:0;
+          color:#800000;
+        ">
+          Edit Student
+        </h2>
+
+        <label>Full Name</label>
+        <input id="editFullName" type="text"
+          style="width:100%;padding:12px;margin:6px 0 14px;box-sizing:border-box;">
+
+        <label>MyKad</label>
+        <input id="editMyKad" type="text"
+          style="width:100%;padding:12px;margin:6px 0 14px;box-sizing:border-box;">
+
+        <label>Student Phone</label>
+        <input id="editPhone" type="text"
+          style="width:100%;padding:12px;margin:6px 0 14px;box-sizing:border-box;">
+
+        <label>Parent / Guardian Phone</label>
+        <input id="editParentPhone" type="text"
+          style="width:100%;padding:12px;margin:6px 0 14px;box-sizing:border-box;">
+
+        <label>Gender</label>
+        <select id="editGender"
+          style="width:100%;padding:12px;margin:6px 0 14px;box-sizing:border-box;">
+          <option value="">Select Gender</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
+
+        <label>Email</label>
+        <input id="editEmail" type="email"
+          style="width:100%;padding:12px;margin:6px 0 14px;box-sizing:border-box;">
+
+        <label>State</label>
+        <input id="editState" type="text"
+          style="width:100%;padding:12px;margin:6px 0 14px;box-sizing:border-box;">
+
+        <label>District</label>
+        <input id="editDistrict" type="text"
+          style="width:100%;padding:12px;margin:6px 0 14px;box-sizing:border-box;">
+
+        <label>Programme</label>
+        <input id="editProgram" type="text"
+          style="width:100%;padding:12px;margin:6px 0 14px;box-sizing:border-box;">
+
+        <label>Source</label>
+        <input id="editSource" type="text"
+          style="width:100%;padding:12px;margin:6px 0 14px;box-sizing:border-box;">
+
+        <label>Status</label>
+        <select id="editStatus"
+          style="width:100%;padding:12px;margin:6px 0 14px;box-sizing:border-box;">
+          <option value="new">New</option>
+          <option value="contacted">Contacted</option>
+          <option value="counselling">Counselling</option>
+          <option value="follow_up">Follow-up</option>
+          <option value="referred">Referred</option>
+          <option value="applied">Applied</option>
+          <option value="registered">Registered</option>
+          <option value="completed">Completed</option>
+          <option value="closed">Closed</option>
+        </select>
+
+        <label>Recruitment Stage</label>
+        <select id="editStage"
+          style="width:100%;padding:12px;margin:6px 0 14px;box-sizing:border-box;">
+          <option value="">None</option>
+          <option value="p2">P2</option>
+          <option value="r1">R1</option>
+          <option value="r2">R2</option>
+        </select>
+
+        <label>Notes</label>
+        <textarea id="editNotes"
+          style="width:100%;padding:12px;margin:6px 0 18px;box-sizing:border-box;min-height:100px;"></textarea>
+
+        <button id="saveEditedStudent"
+          style="
+            width:100%;
+            padding:14px;
+            border:0;
+            border-radius:12px;
+            background:#800000;
+            color:white;
+            font-size:17px;
+            font-weight:bold;
+          ">
+          Save Changes
+        </button>
+
+        <button id="cancelEditStudent"
+          style="
+            width:100%;
+            padding:14px;
+            border:0;
+            border-radius:12px;
+            background:#333;
+            color:white;
+            font-size:17px;
+            font-weight:bold;
+            margin-top:10px;
+          ">
+          Cancel
+        </button>
+
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  document.getElementById("editFullName").value =
+    student.full_name || "";
+
+  document.getElementById("editMyKad").value =
+    student.mykad || "";
+
+  document.getElementById("editPhone").value =
+    student.phone || "";
+
+  document.getElementById("editParentPhone").value =
+    student.parent_phone || "";
+
+  document.getElementById("editGender").value =
+    student.gender || "";
+
+  document.getElementById("editEmail").value =
+    student.email || "";
+
+  document.getElementById("editState").value =
+    student.state || "";
+
+  document.getElementById("editDistrict").value =
+    student.district || "";
+
+  document.getElementById("editProgram").value =
+    student.program || "";
+
+  document.getElementById("editSource").value =
+    student.source || "";
+
+  document.getElementById("editStatus").value =
+    student.status || "new";
+
+  document.getElementById("editStage").value =
+    student.recruitment_stage || "";
+
+  document.getElementById("editNotes").value =
+    student.notes || "";
+
+  document.getElementById("cancelEditStudent").onclick = function () {
+    modal.remove();
+  };
+
+  document.getElementById("saveEditedStudent").onclick = async function () {
+
+    const fullName =
+      document.getElementById("editFullName").value.trim();
+
+    if (!fullName) {
+      alert("Full Name wajib diisi.");
+      return;
+    }
+
+    const updates = {
+      full_name: fullName,
+      mykad: document.getElementById("editMyKad").value.trim(),
+      phone: document.getElementById("editPhone").value.trim(),
+      parent_phone: document.getElementById("editParentPhone").value.trim(),
+      gender: document.getElementById("editGender").value,
+      email: document.getElementById("editEmail").value.trim(),
+      state: document.getElementById("editState").value.trim(),
+      district: document.getElementById("editDistrict").value.trim(),
+      program: document.getElementById("editProgram").value.trim(),
+      source: document.getElementById("editSource").value.trim(),
+      status: document.getElementById("editStatus").value,
+      recruitment_stage: document.getElementById("editStage").value || null,
+      notes: document.getElementById("editNotes").value.trim(),
+      updated_at: new Date().toISOString()
+    };
+
+    const { error: updateError } = await supabaseClient
+      .from("students")
+      .update(updates)
+      .eq("id", studentId);
+
+    if (updateError) {
+      alert("Gagal kemas kini pelajar: " + updateError.message);
+      return;
+    }
+
+    alert("Maklumat pelajar berjaya dikemas kini.");
+
+    modal.remove();
+
+    const oldProfile =
+      document.getElementById("studentProfile");
+
+    if (oldProfile) {
+      oldProfile.remove();
+    }
+
+    await openStudentProfile(studentId);
+  };
+}
 function filterStudents() {
   const search =
     document.getElementById("studentSearch").value.toLowerCase();
