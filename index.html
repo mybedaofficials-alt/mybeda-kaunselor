@@ -277,6 +277,9 @@
   <button onclick="openStudents()">
   Students
 </button>
+  <button onclick="refreshData()">
+  Refresh Data
+</button>
   <button class="logout" onclick="logoutUser()">
     Logout
   </button>
@@ -541,6 +544,24 @@
   if (incompleteElement)
     incompleteElement.textContent =
       documentCount || 0;
+}    async function refreshData() {
+  try {
+    await loadStats();
+
+    if (typeof loadMasterStats === "function") {
+      await loadMasterStats();
+    }
+
+    const studentList = document.getElementById("studentList");
+
+    if (studentList && typeof openStudents === "function") {
+      await openStudents();
+    }
+
+    alert("Data berjaya dikemas kini.");
+  } catch (error) {
+    alert("Gagal refresh data: " + error.message);
+  }
 }
      async function logoutUser() {
     await supabaseClient.auth.signOut();
