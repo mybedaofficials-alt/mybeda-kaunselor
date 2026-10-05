@@ -718,7 +718,206 @@ function filterStudents() {
 }
 
 function addStudent() {
-  alert("Add Student module akan kita bina selepas ini.");
+  const form = document.createElement("div");
+
+  form.id = "addStudentForm";
+
+  form.innerHTML = `
+    <div style="
+      position:fixed;
+      inset:0;
+      background:#f5f5f5;
+      z-index:10000;
+      overflow:auto;
+      padding:24px 20px;
+    ">
+
+      <div style="
+        background:#7a0019;
+        color:white;
+        padding:24px;
+        border-radius:18px;
+        margin-bottom:20px;
+      ">
+        <h1 style="margin:0 0 8px;">Add Student</h1>
+        <p style="margin:0;">Student Registration</p>
+      </div>
+
+      <div style="
+        background:white;
+        padding:20px;
+        border-radius:18px;
+      ">
+
+        <label>Full Name *</label>
+        <input id="newFullName" type="text"
+          placeholder="Student full name">
+
+        <label>MyKad</label>
+        <input id="newMyKad" type="text"
+          placeholder="MyKad number">
+
+        <label>Student Phone</label>
+        <input id="newPhone" type="tel"
+          placeholder="Student phone">
+
+        <label>Parent / Guardian Phone</label>
+        <input id="newParentPhone" type="tel"
+          placeholder="Parent / guardian phone">
+
+        <label>Gender</label>
+        <select id="newGender">
+          <option value="">Select gender</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
+
+        <label>Email</label>
+        <input id="newEmail" type="email"
+          placeholder="Email address">
+
+        <label>State</label>
+        <input id="newState" type="text"
+          placeholder="State">
+
+        <label>District</label>
+        <input id="newDistrict" type="text"
+          placeholder="District">
+
+        <label>Programme</label>
+        <input id="newProgram" type="text"
+          placeholder="Programme">
+
+        <label>Source</label>
+        <input id="newSource" type="text"
+          placeholder="Where did the lead come from?">
+
+        <label>Notes</label>
+        <textarea id="newNotes"
+          placeholder="Notes"></textarea>
+
+        <button onclick="saveStudent()" style="
+          width:100%;
+          padding:15px;
+          margin-top:15px;
+          border:0;
+          border-radius:12px;
+          background:#7a0019;
+          color:white;
+          font-size:17px;
+          font-weight:bold;
+        ">
+          Save Student
+        </button>
+
+        <button onclick="closeAddStudent()" style="
+          width:100%;
+          padding:15px;
+          margin-top:12px;
+          border:0;
+          border-radius:12px;
+          background:#333;
+          color:white;
+          font-size:17px;
+          font-weight:bold;
+        ">
+          Cancel
+        </button>
+
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(form);
+
+  const inputs = form.querySelectorAll("input, select, textarea");
+
+  inputs.forEach(input => {
+    input.style.width = "100%";
+    input.style.padding = "13px";
+    input.style.margin = "8px 0 16px";
+    input.style.border = "1px solid #ddd";
+    input.style.borderRadius = "10px";
+    input.style.fontSize = "16px";
+    input.style.boxSizing = "border-box";
+  });
+
+  form.querySelectorAll("label").forEach(label => {
+    label.style.display = "block";
+    label.style.fontWeight = "600";
+    label.style.marginTop = "4px";
+  });
+}
+
+
+function closeAddStudent() {
+  const form = document.getElementById("addStudentForm");
+
+  if (form) {
+    form.remove();
+  }
+}
+
+
+async function saveStudent() {
+  const fullName =
+    document.getElementById("newFullName").value.trim();
+
+  if (!fullName) {
+    alert("Sila masukkan nama pelajar.");
+    return;
+  }
+
+  const {
+    data: { user }
+  } = await supabaseClient.auth.getUser();
+
+  if (!user) {
+    alert("Sesi login telah tamat. Sila login semula.");
+    return;
+  }
+
+  const studentData = {
+    full_name: fullName,
+    mykad:
+      document.getElementById("newMyKad").value.trim(),
+    phone:
+      document.getElementById("newPhone").value.trim(),
+    parent_phone:
+      document.getElementById("newParentPhone").value.trim(),
+    gender:
+      document.getElementById("newGender").value,
+    email:
+      document.getElementById("newEmail").value.trim(),
+    state:
+      document.getElementById("newState").value.trim(),
+    district:
+      document.getElementById("newDistrict").value.trim(),
+    program:
+      document.getElementById("newProgram").value.trim(),
+    source:
+      document.getElementById("newSource").value.trim(),
+    notes:
+      document.getElementById("newNotes").value.trim(),
+    status: "new",
+    assigned_to: user.id,
+    created_by: user.id
+  };
+
+  const { error } = await supabaseClient
+    .from("students")
+    .insert(studentData);
+
+  if (error) {
+    alert("Gagal simpan pelajar: " + error.message);
+    return;
+  }
+
+  alert("Pelajar berjaya disimpan.");
+
+  closeAddStudent();
+  closeStudents();
+  openStudents();
 }
 </script>
 
