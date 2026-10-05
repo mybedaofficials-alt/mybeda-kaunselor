@@ -355,6 +355,7 @@
     }
 
     await loadStats();
+    await loadMasterStats();
   }
 
 
@@ -434,8 +435,111 @@
   }
 
 
-  async function logoutUser() {
+   async function loadMasterStats() {
 
+  
+
+  const { count: p2Count } =
+    await supabaseClient
+      .from("students")
+      .select("*", {
+        count: "exact",
+        head: true
+      })
+      .eq("recruitment_stage", "p2");
+
+  const { count: r1Count } =
+    await supabaseClient
+      .from("students")
+      .select("*", {
+        count: "exact",
+        head: true
+      })
+      .eq("recruitment_stage", "r1");
+
+  const { count: r2Count } =
+    await supabaseClient
+      .from("students")
+      .select("*", {
+        count: "exact",
+        head: true
+      })
+      .eq("recruitment_stage", "r2");
+
+  const { count: documentCount } =
+    await supabaseClient
+      .from("student_documents")
+      .select("*", {
+        count: "exact",
+        head: true
+      })
+      .eq("status", "pending");
+
+  const { data: collections } =
+    await supabaseClient
+      .from("collections")
+      .select("amount");
+
+  const totalCollection =
+    (collections || []).reduce(
+      (sum, item) =>
+        sum + Number(item.amount || 0),
+      0
+    );
+
+  const { data: commissions } =
+    await supabaseClient
+      .from("commission_rules")
+      .select("commission_amount")
+      .eq("active", true);
+
+  const totalCommission =
+    (commissions || []).reduce(
+      (sum, item) =>
+        sum + Number(item.commission_amount || 0),
+      0
+    );
+
+  const p2Element =
+    document.getElementById("p2");
+
+  const r1Element =
+    document.getElementById("r1");
+
+  const r2Element =
+    document.getElementById("r2");
+
+  const collectionElement =
+    document.getElementById("collection");
+
+  const commissionElement =
+    document.getElementById("commission");
+
+  const incompleteElement =
+    document.getElementById("incompleteDocuments");
+
+  if (p2Element)
+    p2Element.textContent = p2Count || 0;
+
+  if (r1Element)
+    r1Element.textContent = r1Count || 0;
+
+  if (r2Element)
+    r2Element.textContent = r2Count || 0;
+
+  if (collectionElement)
+    collectionElement.textContent =
+      "RM " + totalCollection.toFixed(2);
+
+  if (commissionElement)
+    commissionElement.textContent =
+      "RM " + totalCommission.toFixed(2);
+
+  if (incompleteElement)
+    incompleteElement.textContent =
+      documentCount || 0;
+}
+     async function logoutUser() {
     await supabaseClient.auth.signOut();
 
     document.getElementById("dashboard").style.display =
