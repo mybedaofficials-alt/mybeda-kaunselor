@@ -1072,7 +1072,8 @@ if (profile) profile.remove();
       oldProfile.remove();
     }
 
-    await openStudentProfile(studentId);
+    await loadStudents();
+await openStudentProfile(studentId);
   };
 }
 function filterStudents() {
