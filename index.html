@@ -586,6 +586,9 @@ if ("serviceWorker" in navigator) {
       "block";
 
   }
+  async function openMasterControl() {
+  alert("Master Control sedang dibina.");
+}
 async function openStudents() {
   const { data: students, error } = await supabaseClient
     .from("students")
