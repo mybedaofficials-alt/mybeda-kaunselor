@@ -1444,6 +1444,17 @@ async function saveStudent() {
   closeStudents();
   openStudents();
 }
+  (async function restoreSession(){
+
+  const {
+    data: { session }
+  } = await supabaseClient.auth.getSession();
+
+  if (session && session.user) {
+    await showDashboard(session.user);
+  }
+
+})();
 </script>
 
 </body>
