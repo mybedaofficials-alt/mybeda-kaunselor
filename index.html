@@ -618,8 +618,11 @@ async function logoutUser() {
   document.getElementById("login").style.display =
     "block";
 }
-  
+  async function openMasterControl() {
+  alert("MASTER CONTROL OK");
+}
 async function openStudents() {
+  
   const { data: students, error } = await supabaseClient
     .from("students")
     .select("id, full_name, phone, program, status, recruitment_stage")
