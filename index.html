@@ -559,23 +559,36 @@ if ("serviceWorker" in navigator) {
       documentCount || 0;
 }   async function getCurrentUserRole() {
   const { data: { user } } =
-    await supabaseClient.auth.getUser();
+  await supabaseClient.auth.getUser();
 
-  if (!user) return null;
+if (!user) {
+  alert("USER: TIADA SESSION");
+  return null;
+}
 
-  const { data: profile, error } =
-    await supabaseClient
-      .from("profiles")
-      .select("role")
-      .eq("id", user.id)
-      .single();
+const { data: profile, error } =
+  await supabaseClient
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
 
-  if (error) {
-    console.error(error);
-    return null;
-  }
+if (error) {
+  alert(
+    "USER ADA\n" +
+    "UID: " + user.id + "\n" +
+    "PROFILE ERROR: " + error.message
+  );
+  return null;
+}
 
-  return profile?.role || null;
+alert(
+  "USER ADA\n" +
+  "UID: " + user.id + "\n" +
+  "ROLE: " + profile?.role
+);
+
+return profile?.role || null;
 } async function refreshData() {
   try {
     await loadStats();
