@@ -605,12 +605,16 @@ return profile?.role || null;
 
     
   } catch (error) {
-    alert("Gagal refresh data: " + error.message);
-  }
-}
-     async function logoutUser() {
-    await supabaseClient.auth.signOut();
+    async function openMasterControl() {
+  const role = await getCurrentUserRole();
 
+  if (role !== "admin") {
+    alert("Akses hanya untuk Admin.");
+    return;
+  }
+
+  alert("Master Control Admin");
+}
     document.getElementById("dashboard").style.display =
       "none";
 
@@ -618,11 +622,7 @@ return profile?.role || null;
       "block";
 
   }
-  async function openMasterControl() {
-  const role = await getCurrentUserRole();
-
-  alert("Role semasa: " + role);
-}
+  
 async function openStudents() {
   const { data: students, error } = await supabaseClient
     .from("students")
