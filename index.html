@@ -608,11 +608,6 @@ if ("serviceWorker" in navigator) {
   async function openMasterControl() {
   const role = await getCurrentUserRole();
 
-  if (role !== "admin") {
-    alert("Akses hanya untuk Admin.");
-    return;
-  }
-
   alert("Role semasa: " + role);
 }
 async function openStudents() {
