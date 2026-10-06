@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>MYBEDA COUNSELLOR — Staff Management</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+  background:#f5f5f5;
+  color:#222;
+}
+
+.header{
+  background:#7b0f1a;
+  color:white;
+  padding:28px 22px;
+}
+
+.header h1{
+  margin:0;
+  font-size:30px;
+}
+
+.header p{
+  margin:8px 0 0;
+  font-size:16px;
+  opacity:.9;
+}
+
+.container{
+  max-width:1100px;
+  margin:auto;
+  padding:22px;
+}
+
+.toolbar{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:20px;
+}
+
+button{
+  border:0;
+  border-radius:12px;
+  padding:14px 18px;
+  font-size:16px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.primary{
+  background:#7b0f1a;
+  color:white;
+}
+
+.dark{
+  background:#222;
+  color:white;
+}
+
+.search{
+  width:100%;
+  padding:15px;
+  border:1px solid #ddd;
+  border-radius:12px;
+  font-size:16px;
+  margin-bottom:20px;
+}
+
+.card{
+  background:white;
+  border-radius:18px;
+  padding:20px;
+  margin-bottom:14px;
+  box-shadow:0 4px 18px rgba(0,0,0,.06);
+}
+
+.row{
+  display:flex;
+  justify-content:space-between;
+  gap:15px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+.name{
+  font-size:20px;
+  font-weight:800;
+}
+
+.meta{
+  color:#777;
+  margin-top:6px;
+}
+
+.badge{
+  display:inline-block;
+  padding:6px 10px;
+  border-radius:20px;
+  background:#eee;
+  font-size:13px;
+  font-weight:700;
+}
+
+.badge.admin{
+  background:#f4d6d9;
+}
+
+.actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:14px;
+}
+
+.empty{
+  text-align:center;
+  color:#777;
+  padding:35px;
+}
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.5);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  z-index:10;
+}
+
+.modal-box{
+  background:white;
+  border-radius:18px;
+  padding:22px;
+  width:100%;
+  max-width:520px;
+  max-height:90vh;
+  overflow:auto;
+}
+
+label{
+  display:block;
+  font-weight:700;
+  margin:14px 0 6px;
+}
+
+input,
+select{
+  width:100%;
+  padding:13px;
+  border:1px solid #ddd;
+  border-radius:10px;
+  font-size:16px;
+}
+
+.note{
+  font-size:13px;
+  color:#777;
+  margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <h1>STAFF / COUNSELLORS</h1>
+  <p>Manage counsellors, staff accounts, roles and access.</p>
+</div>
+
+<div class="container">
+
+  <div class="card">
+    <div class="row">
+
+      <div>
+        <div class="name" id="adminName">
+          Checking administrator...
+        </div>
+
+        <div class="meta" id="adminEmail"></div>
+      </div>
+
+      <span class="badge admin">
+        ADMIN
+      </span>
+
+    </div>
+  </div>
+
+  <div class="toolbar">
+
+    <button
+      class="dark"
+      onclick="goMasterControl()">
+      Back to Master Control
+    </button>
+
+    <button
+      class="primary"
+      onclick="openAddStaff()">
+      + Add Staff / Counsellor
+    </button>
+
+  </div>
+
+  <input
+    class="search"
+    id="search"
+    placeholder="Search name, email or phone..."
+    oninput="renderStaff()">
+
+  <div id="staffList">
+    <div class="empty">
+      Loading staff...
+    </div>
+  </div>
+
+</div>
+
+
+<div class="modal" id="staffModal">
+
+  <div class="modal-box">
+
+    <h2 id="modalTitle">
+      Add Staff / Counsellor
+    </h2>
+
+    <label>Full Name</label>
+    <input id="fullName">
+
+    <label>Staff ID</label>
+    <input
+      id="staffId"
+      placeholder="MYB-C001">
+
+    <label>Email</label>
+    <input
+      id="email"
+      type="email">
+
+    <label>Phone</label>
+    <input id="phone">
+
+    <label>Role</label>
+
+    <select id="role">
+      <option value="counselor">
+        Counsellor
+      </option>
+
+      <option value="admin">
+        Admin
+      </option>
+    </select>
+
+    <div class="note">
+      New Auth account creation will be connected
+      through a secure server-side Admin function.
+      This page will not store a password.
+    </div>
+
+    <div class="actions">
+
+      <button
+        class="primary"
+        onclick="saveStaff()">
+        Save
+      </button>
+
+      <button
+        class="dark"
+        onclick="closeModal()">
+        Cancel
+      </button>
+
+    </div>
+
+    <div
+      id="message"
+      class="note">
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+const SUPABASE_URL =
+"https://spzqbqitrvajqqzcqgtv.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+"sb_publishable_Szc7ZQhb4fFwYmq95libYw_KFUMN7Ky";
+
+const supabaseClient =
+window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
+
+let staff = [];
+let editingId = null;
+
+
+async function checkAdmin(){
+
+  const {
+    data:{user},
+    error
+  } =
+  await supabaseClient.auth.getUser();
+
+  if(error || !user){
+
+    window.location.href =
+    "index.html";
+
+    return false;
+  }
+
+
+  const {
+    data:profile,
+    error:profileError
+  } =
+  await supabaseClient
+    .from("profiles")
+    .select("full_name,role")
+    .eq("id",user.id)
+    .single();
+
+
+  if(
+    profileError ||
+    !profile ||
+    profile.role !== "admin"
+  ){
+
+    alert(
+      "Akses hanya untuk Admin."
+    );
+
+    window.location.href =
+    "index.html";
+
+    return false;
+  }
+
+
+  document.getElementById(
+    "adminName"
+  ).textContent =
+  profile.full_name ||
+  "Administrator";
+
+
+  document.getElementById(
+    "adminEmail"
+  ).textContent =
+  user.email || "";
+
+
+  return true;
+}
+
+
+
+async function loadStaff(){
+
+  const {
+    data,
+    error
+  } =
+  await supabaseClient
+    .from("profiles")
+    .select(
+      "id,full_name,phone,role,created_at,updated_at"
+    )
+    .order(
+      "created_at",
+      {ascending:true}
+    );
+
+
+  if(error){
+
+    document.getElementById(
+      "staffList"
+    ).innerHTML =
+    '<div class="empty">' +
+    'Gagal memuatkan staff: ' +
+    escapeHtml(error.message) +
+    '</div>';
+
+    return;
+  }
+
+
+  staff = data || [];
+
+  renderStaff();
+}
+
+
+
+function renderStaff(){
+
+  const q =
+  document.getElementById(
+    "search"
+  ).value
+   .trim()
+   .toLowerCase();
+
+
+  const rows =
+  staff.filter(s =>
+
+    (s.full_name || "")
+      .toLowerCase()
+      .includes(q)
+
+    ||
+
+    (s.phone || "")
+      .toLowerCase()
+      .includes(q)
+
+    ||
+
+    (s.role || "")
+      .toLowerCase()
+      .includes(q)
+
+  );
+
+
+  if(!rows.length){
+
+    document.getElementById(
+      "staffList"
+    ).innerHTML =
+    '<div class="card empty">' +
+    'Tiada staff dijumpai.' +
+    '</div>';
+
+    return;
+  }
+
+
+  document.getElementById(
+    "staffList"
+  ).innerHTML =
+  rows.map(s =>
+
+    '<div class="card">' +
+
+      '<div class="row">' +
+
+        '<div>' +
+
+          '<div class="name">' +
+          escapeHtml(
+            s.full_name || "Unnamed"
+          ) +
+          '</div>' +
+
+          '<div class="meta">' +
+          escapeHtml(
+            s.phone || "No phone"
+          ) +
+          '</div>' +
+
+        '</div>' +
+
+        '<span class="badge ' +
+        (s.role === "admin"
+          ? "admin"
+          : "") +
+        '">' +
+
+        escapeHtml(
+          (s.role || "counselor")
+          .toUpperCase()
+        ) +
+
+        '</span>' +
+
+      '</div>' +
+
+      '<div class="meta">' +
+      'User ID: ' +
+      escapeHtml(s.id) +
+      '</div>' +
+
+      '<div class="actions">' +
+
+        '<button class="primary" ' +
+        'onclick="editStaff(\'' +
+        s.id +
+        '\')">' +
+        'Edit Profile' +
+        '</button>' +
+
+      '</div>' +
+
+    '</div>'
+
+  ).join("");
+}
+
+
+
+function openAddStaff(){
+
+  editingId = null;
+
+  document.getElementById(
+    "modalTitle"
+  ).textContent =
+  "Add Staff / Counsellor";
+
+
+  [
+    "fullName",
+    "staffId",
+    "email",
+    "phone"
+  ].forEach(id =>
+
+    document.getElementById(
+      id
+    ).value = ""
+
+  );
+
+
+  document.getElementById(
+    "role"
+  ).value =
+  "counselor";
+
+
+  document.getElementById(
+    "message"
+  ).textContent = "";
+
+
+  document.getElementById(
+    "staffModal"
+  ).style.display =
+  "flex";
+}
+
+
+
+function editStaff(id){
+
+  const s =
+  staff.find(
+    x => x.id === id
+  );
+
+  if(!s) return;
+
+
+  editingId = id;
+
+
+  document.getElementById(
+    "modalTitle"
+  ).textContent =
+  "Edit Staff Profile";
+
+
+  document.getElementById(
+    "fullName"
+  ).value =
+  s.full_name || "";
+
+
+  document.getElementById(
+    "phone"
+  ).value =
+  s.phone || "";
+
+
+  document.getElementById(
+    "role"
+  ).value =
+  s.role || "counselor";
+
+
+  document.getElementById(
+    "staffId"
+  ).value = "";
+
+
+  document.getElementById(
+    "email"
+  ).value = "";
+
+
+  document.getElementById(
+    "message"
+  ).textContent =
+  "Email and Staff ID will be connected to account-management layer.";
+
+
+  document.getElementById(
+    "staffModal"
+  ).style.display =
+  "flex";
+}
+
+
+
+async function saveStaff(){
+
+  const full_name =
+  document.getElementById(
+    "fullName"
+  ).value.trim();
+
+
+  const phone =
+  document.getElementById(
+    "phone"
+  ).value.trim();
+
+
+  const role =
+  document.getElementById(
+    "role"
+  ).value;
+
+
+  const message =
+  document.getElementById(
+    "message"
+  );
+
+
+  if(!full_name){
+
+    message.textContent =
+    "Nama wajib diisi.";
+
+    return;
+  }
+
+
+  if(!editingId){
+
+    message.textContent =
+    "Penciptaan akaun baharu belum diaktifkan dari browser. Kita akan sambungkan melalui secure Admin function.";
+
+    return;
+  }
+
+
+  const {error} =
+  await supabaseClient
+    .from("profiles")
+    .update({
+      full_name,
+      phone,
+      role,
+      updated_at:
+        new Date().toISOString()
+    })
+    .eq(
+      "id",
+      editingId
+    );
+
+
+  if(error){
+
+    message.textContent =
+    "Gagal simpan: " +
+    error.message;
+
+    return;
+  }
+
+
+  closeModal();
+
+  await loadStaff();
+}
+
+
+
+function closeModal(){
+
+  document.getElementById(
+    "staffModal"
+  ).style.display =
+  "none";
+}
+
+
+
+function goMasterControl(){
+
+  window.location.href =
+  "master-control.html";
+}
+
+
+
+async function logoutUser(){
+
+  await supabaseClient
+    .auth
+    .signOut();
+
+  window.location.href =
+  "index.html";
+}
+
+
+
+function escapeHtml(v){
+
+  return String(v).replace(
+    /[&<>"']/g,
+    c => ({
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#039;"
+    }[c])
+  );
+}
+
+
+
+(async()=>{
+
+  if(
+    await checkAdmin()
+  ){
+    await loadStaff();
+  }
+
+})();
+
+</script>
+
+</body>
+</html>
