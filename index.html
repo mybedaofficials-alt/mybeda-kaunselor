@@ -557,7 +557,26 @@ if ("serviceWorker" in navigator) {
   if (incompleteElement)
     incompleteElement.textContent =
       documentCount || 0;
-}    async function refreshData() {
+}   async function getCurrentUserRole() {
+  const { data: { user } } =
+    await supabaseClient.auth.getUser();
+
+  if (!user) return null;
+
+  const { data: profile, error } =
+    await supabaseClient
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
+  if (error) {
+    console.error(error);
+    return null;
+  }
+
+  return profile?.role || null;
+} async function refreshData() {
   try {
     await loadStats();
 
