@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>MYBEDA COUNSELLOR — Master Control</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f5f5f5;
+  color: #222;
+}
+
+.header {
+  background: #7a0019;
+  color: white;
+  padding: 28px 20px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.header p {
+  margin: 8px 0 0;
+  font-size: 15px;
+  opacity: .9;
+}
+
+.container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 20px;
+}
+
+.admin-bar {
+  background: white;
+  border-radius: 16px;
+  padding: 18px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 18px rgba(0,0,0,.06);
+}
+
+.admin-bar strong {
+  display: block;
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+
+.admin-bar span {
+  color: #666;
+  font-size: 14px;
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 28px 0 12px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  min-height: 130px;
+  box-shadow: 0 4px 18px rgba(0,0,0,.06);
+  cursor: pointer;
+  transition: transform .15s;
+}
+
+.card:active {
+  transform: scale(.98);
+}
+
+.card h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+
+.card p {
+  margin: 0;
+  color: #777;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.icon {
+  font-size: 26px;
+  margin-bottom: 12px;
+}
+
+.bottom-actions {
+  margin-top: 30px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+button {
+  border: 0;
+  border-radius: 12px;
+  padding: 14px 20px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.back-btn {
+  background: #7a0019;
+  color: white;
+}
+
+.logout-btn {
+  background: #222;
+  color: white;
+}
+
+.message {
+  margin-top: 20px;
+  background: white;
+  padding: 18px;
+  border-radius: 14px;
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 14px;
+  }
+
+  .header h1 {
+    font-size: 24px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <h1>MASTER CONTROL</h1>
+  <p>MYBEDA COUNSELLOR — Administration System</p>
+</div>
+
+<div class="container">
+
+  <div class="admin-bar">
+    <strong id="adminName">Checking administrator...</strong>
+    <span id="adminEmail"></span>
+  </div>
+
+  <div class="section-title">People Management</div>
+
+  <div class="grid">
+
+    <div class="card" onclick="comingSoon('Staff / Counsellors')">
+      <div class="icon">👤</div>
+      <h3>Staff / Counsellors</h3>
+      <p>Manage counsellors, staff accounts, roles and access.</p>
+    </div>
+
+    <div class="card" onclick="comingSoon('Students')">
+      <div class="icon">🎓</div>
+      <h3>Students</h3>
+      <p>Manage student records and recruitment information.</p>
+    </div>
+
+  </div>
+
+
+  <div class="section-title">Recruitment Management</div>
+
+  <div class="grid">
+
+    <div class="card" onclick="comingSoon('Leads')">
+      <div class="icon">📋</div>
+      <h3>Leads</h3>
+      <p>Manage new leads and recruitment sources.</p>
+    </div>
+
+    <div class="card" onclick="comingSoon('Counselling')">
+      <div class="icon">💬</div>
+      <h3>Counselling</h3>
+      <p>Manage counselling sessions and recommendations.</p>
+    </div>
+
+    <div class="card" onclick="comingSoon('Follow-ups')">
+      <div class="icon">📅</div>
+      <h3>Follow-ups</h3>
+      <p>Manage upcoming, completed and overdue follow-ups.</p>
+    </div>
+
+    <div class="card" onclick="comingSoon('Recruitment Stages')">
+      <div class="icon">📈</div>
+      <h3>Recruitment Stages</h3>
+      <p>Manage P2, R1, R2, Registered and Completed.</p>
+    </div>
+
+  </div>
+
+
+  <div class="section-title">Academic & Eligibility</div>
+
+  <div class="grid">
+
+    <div class="card" onclick="comingSoon('Programs')">
+      <div class="icon">🏫</div>
+      <h3>Programs</h3>
+      <p>Manage programmes, levels, institutions and intakes.</p>
+    </div>
+
+    <div class="card" onclick="comingSoon('Qualifications')">
+      <div class="icon">📚</div>
+      <h3>Qualifications</h3>
+      <p>Manage SPM, TVET, SKM, DKM, Diploma, Degree, Master and other qualifications.</p>
+    </div>
+
+    <div class="card" onclick="comingSoon('Eligibility Rules')">
+      <div class="icon">✓</div>
+      <h3>Eligibility Rules</h3>
+      <p>Configure academic requirements and automatic eligibility checking.</p>
+    </div>
+
+    <div class="card" onclick="comingSoon('Academic Records')">
+      <div class="icon">📄</div>
+      <h3>Academic Records</h3>
+      <p>Manage student academic information and supporting documents.</p>
+    </div>
+
+  </div>
+
+
+  <div class="section-title">Finance</div>
+
+  <div class="grid">
+
+    <div class="card" onclick="comingSoon('Collections')">
+      <div class="icon">💰</div>
+      <h3>Collections</h3>
+      <p>Manage student payments, collections and payment records.</p>
+    </div>
+
+    <div class="card" onclick="comingSoon('Commission Rules')">
+      <div class="icon">🧾</div>
+      <h3>Commission Rules</h3>
+      <p>Configure commission rules for R1 and R2.</p>
+    </div>
+
+    <div class="card" onclick="comingSoon('Commission Ledger')">
+      <div class="icon">📊</div>
+      <h3>Commission Ledger</h3>
+      <p>Track earned, paid and outstanding commission.</p>
+    </div>
+
+  </div>
+
+
+  <div class="section-title">Documents & Configuration</div>
+
+  <div class="grid">
+
+    <div class="card" onclick="comingSoon('Document Types')">
+      <div class="icon">📁</div>
+      <h3>Document Types</h3>
+      <p>Manage required student documents.</p>
+    </div>
+
+    <div class="card" onclick="comingSoon('Lead Sources')">
+      <div class="icon">📣</div>
+      <h3>Lead Sources</h3>
+      <p>Manage recruitment and lead sources.</p>
+    </div>
+
+    <div class="card" onclick="comingSoon('Locations')">
+      <div class="icon">📍</div>
+      <h3>Locations</h3>
+      <p>Manage states, districts and locations.</p>
+    </div>
+
+    <div class="card" onclick="comingSoon('System Settings')">
+      <div class="icon">⚙️</div>
+      <h3>System Settings</h3>
+      <p>Manage system-wide configuration.</p>
+    </div>
+
+    <div class="card" onclick="comingSoon('Custom Fields')">
+      <div class="icon">🛠️</div>
+      <h3>Custom Fields</h3>
+      <p>Add additional fields without changing the core system.</p>
+    </div>
+
+  </div>
+
+
+  <div class="section-title">Reports & Performance</div>
+
+  <div class="grid">
+
+    <div class="card" onclick="comingSoon('Reports')">
+      <div class="icon">📊</div>
+      <h3>Reports</h3>
+      <p>Daily, weekly, monthly and custom reports.</p>
+    </div>
+
+    <div class="card" onclick="comingSoon('Counsellor Performance')">
+      <div class="icon">🏆</div>
+      <h3>Counsellor Performance</h3>
+      <p>Monitor KPI, recruitment performance and ranking.</p>
+    </div>
+
+    <div class="card" onclick="comingSoon('Targets')">
+      <div class="icon">🎯</div>
+      <h3>Targets</h3>
+      <p>Manage individual and team recruitment targets.</p>
+    </div>
+
+  </div>
+
+
+  <div class="section-title">AI Management</div>
+
+  <div class="grid">
+
+    <div class="card" onclick="comingSoon('AI Assistant')">
+      <div class="icon">AI</div>
+      <h3>AI Assistant</h3>
+      <p>Student analysis, next action, eligibility, recruitment and performance intelligence.</p>
+    </div>
+
+    <div class="card" onclick="comingSoon('AI Reports')">
+      <div class="icon">🧠</div>
+      <h3>AI Reports</h3>
+      <p>Generate management summaries and performance insights.</p>
+    </div>
+
+  </div>
+
+
+  <div class="bottom-actions">
+
+    <button class="back-btn" onclick="goDashboard()">
+      Back to Dashboard
+    </button>
+
+    <button class="logout-btn" onclick="logoutUser()">
+      Logout
+    </button>
+
+  </div>
+
+  <div id="message" class="message"></div>
+
+</div>
+
+
+<script>
+
+const SUPABASE_URL =
+  "https://spzqbqitrvajqqzcqgtv.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+  "sb_publishable_Szc7ZQhb4fFwYmq95libYw_KFUMN7Ky";
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+  );
+
+
+async function checkAdmin() {
+
+  const {
+    data: { user },
+    error: authError
+  } = await supabaseClient.auth.getUser();
+
+  if (authError || !user) {
+    alert("Sesi login tidak dijumpai.");
+    window.location.href = "index.html";
+    return;
+  }
+
+  const {
+    data: profile,
+    error: profileError
+  } = await supabaseClient
+    .from("profiles")
+    .select("full_name, role")
+    .eq("id", user.id)
+    .single();
+
+  if (profileError) {
+    alert(
+      "Gagal semak profil Admin: " +
+      profileError.message
+    );
+    return;
+  }
+
+  if (!profile || profile.role !== "admin") {
+    alert("Akses hanya untuk Admin.");
+    window.location.href = "index.html";
+    return;
+  }
+
+  document.getElementById("adminName").textContent =
+    profile.full_name || "Administrator";
+
+  document.getElementById("adminEmail").textContent =
+    user.email || "";
+
+}
+
+
+function comingSoon(moduleName) {
+
+  alert(
+    moduleName +
+    " module akan dibina dalam Master Control."
+  );
+
+}
+
+
+function goDashboard() {
+
+  window.location.href = "index.html";
+
+}
+
+
+async function logoutUser() {
+
+  await supabaseClient.auth.signOut();
+
+  window.location.href = "index.html";
+
+}
+
+
+checkAdmin();
+
+</script>
+
+</body>
+</html>
