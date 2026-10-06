@@ -505,9 +505,14 @@ function renderStaff(){
       '</div>' +
 
       '<div class="meta">' +
-      'User ID: ' +
-      escapeHtml(s.id) +
-      '</div>' +
+'Staff ID: ' +
+escapeHtml(s.staff_id || "Not assigned") +
+'</div>' +
+
+'<div class="meta">' +
+'User ID: ' +
+escapeHtml(s.id) +
+'</div>' +
 
       '<div class="actions">' +
 
