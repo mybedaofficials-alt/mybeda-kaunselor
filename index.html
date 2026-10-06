@@ -606,7 +606,14 @@ if ("serviceWorker" in navigator) {
 
   }
   async function openMasterControl() {
-  alert("Master Control sedang dibina.");
+  const role = await getCurrentUserRole();
+
+  if (role !== "admin") {
+    alert("Akses hanya untuk Admin.");
+    return;
+  }
+
+  alert("Master Control Admin");
 }
 async function openStudents() {
   const { data: students, error } = await supabaseClient
