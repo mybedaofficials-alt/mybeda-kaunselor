@@ -390,7 +390,7 @@ async function loadStaff(){
   await supabaseClient
     .from("profiles")
     .select(
-      "id,full_name,phone,role,created_at,updated_at"
+      "id,full_name,phone,staff_id,role,created_at,updated_at"
     )
     .order(
       "created_at",
