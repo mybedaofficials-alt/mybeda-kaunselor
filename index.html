@@ -613,7 +613,7 @@ if ("serviceWorker" in navigator) {
     return;
   }
 
-  alert("Master Control Admin");
+  alert("Role semasa: " + role);
 }
 async function openStudents() {
   const { data: students, error } = await supabaseClient
