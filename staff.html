@@ -649,6 +649,10 @@ async function saveStaff(){
     "phone"
   ).value.trim();
 
+  const staff_id =
+document.getElementById(
+  "staffId"
+).value.trim();
 
   const role =
   document.getElementById(
@@ -687,6 +691,7 @@ async function saveStaff(){
       full_name,
       phone,
       role,
+      staff_id,
       updated_at:
         new Date().toISOString()
     })
