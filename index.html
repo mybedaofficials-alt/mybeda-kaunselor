@@ -605,23 +605,19 @@ return profile?.role || null;
 
     
   } catch (error) {
-    async function openMasterControl() {
-  const role = await getCurrentUserRole();
-
-  if (role !== "admin") {
-    alert("Akses hanya untuk Admin.");
-    return;
-  }
-
-  alert("Master Control Admin");
+  alert("Gagal refresh data: " + error.message);
 }
-    document.getElementById("dashboard").style.display =
-      "none";
+}
 
-    document.getElementById("login").style.display =
-      "block";
+async function logoutUser() {
+  await supabaseClient.auth.signOut();
 
-  }
+  document.getElementById("dashboard").style.display =
+    "none";
+
+  document.getElementById("login").style.display =
+    "block";
+}
   
 async function openStudents() {
   const { data: students, error } = await supabaseClient
